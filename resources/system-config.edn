@@ -1,0 +1,4 @@
+{:http/server {:opts {:port 8989}
+               :handler #ig/ref :http/handler}
+
+ :http/handler {}}
