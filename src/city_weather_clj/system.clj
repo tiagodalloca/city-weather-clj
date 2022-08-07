@@ -8,6 +8,10 @@
   [_ _ value]
   (ig/ref value))
 
+(defmethod aero/reader 'io/resource
+  [_ _ value]
+  (slurp (io/resource value)))
+
 (defn read-classpath-config
   [file-name]
   (aero/read-config (io/resource file-name)))

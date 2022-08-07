@@ -4,5 +4,5 @@
  :http/handler {:api-client/weather #ig/ref :api-client/weather
                 :system/cache #ig/ref :system/cache}
  :api-client/weather {:endpoint "https://api.openweathermap.org/data/2.5/weather"
-                      :api-key #env OPEN_WEATHER_API_KEY}
+                      :api-key #io/resource "secrets/OPEN_WEATHER_API_KEY"}
  :system/cache {}}

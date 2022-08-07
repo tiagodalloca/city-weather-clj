@@ -12,4 +12,7 @@
                                "tests"]
 
                  :extra-deps {integrant/repl {:mvn/version "0.3.2"}
-                              ring/ring-mock {:mvn/version "0.4.0"}}}}}
+                              ring/ring-mock {:mvn/version "0.4.0"}}}
+           :build {:deps {io.github.clojure/tools.build {:git/tag "v0.8.3" :git/sha "0d20256"}}
+                   :extra-paths ["build"]
+                   :ns-default city-weather-clj.build}}}
