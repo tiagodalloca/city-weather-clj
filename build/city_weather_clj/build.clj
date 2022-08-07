@@ -13,18 +13,6 @@
   (b/delete {:path "target"})
   params)
 
-(defn jar [_]
-  (b/write-pom {:class-dir class-dir
-                :lib lib
-                :version version
-                :basis basis
-                :src-dirs ["src"]})
-  (b/copy-dir {:src-dirs copy-srcs
-               :target-dir class-dir})
-  (b/jar {:class-dir class-dir
-          :jar-file jar-file}))
-
-
 (defn uber [_]
   (clean nil)
   (b/copy-dir {:src-dirs ["src" "resources"]
