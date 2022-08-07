@@ -10,7 +10,10 @@
 
 (defmethod aero/reader 'io/resource
   [_ _ value]
-  (slurp (io/resource value)))
+  (try 
+    (slurp (io/resource value))
+    (catch Exception _
+      (println "Couldn't read resource \"" value \"))))
 
 (defn read-classpath-config
   [file-name]
@@ -29,7 +32,6 @@
      (-> (ig/prep config)
          (ig/init)))))
 
-#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn stop!
   []
   (reset! state (ig/halt! @state)))

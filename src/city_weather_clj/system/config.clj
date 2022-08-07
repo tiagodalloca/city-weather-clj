@@ -17,7 +17,9 @@
   (http-handler/get-handler deps))
 
 (defmethod ig/init-key :api-client/weather
-  [_ {:keys [endpoint api-key]}]
+  [_ {:keys [endpoint api-key]}] 
+  (when-not (some? api-key)
+    (throw (ex-info "Missing api-key" {:api-key api-key})))
   (make-open-weather-client endpoint api-key))
 
 (defmethod ig/init-key :system/cache

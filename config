@@ -1,0 +1,7 @@
+#!/bin/bash
+
+read -p "OPEN_WEATHER_API_KEY: " OPEN_WEATHER_API_KEY
+mkdir -p resources/secrets/
+touch resources/secrets/OPEN_WEATHER_API_KEY
+echo -n "$OPEN_WEATHER_API_KEY" > resources/secrets/OPEN_WEATHER_API_KEY
+printf "Done!\n"
