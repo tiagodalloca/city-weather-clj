@@ -1,6 +1,8 @@
 {:http/server {:opts {:port 8989}
                :handler #ig/ref :http/handler}
 
- :http/handler {:api-client/weather #ig/ref :api-client/weather}
+ :http/handler {:api-client/weather #ig/ref :api-client/weather
+                :system/cache #ig/ref :system/cache}
  :api-client/weather {:endpoint "https://api.openweathermap.org/data/2.5/weather"
-                      :api-key #env OPEN_WEATHER_API_KEY}}
+                      :api-key #env OPEN_WEATHER_API_KEY}
+ :system/cache {}}

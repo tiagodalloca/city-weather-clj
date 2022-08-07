@@ -10,8 +10,8 @@
   (get-city-weather
     [_ city]
     (-> (client/get endpoint {:query-params {"q" city
-                                         "appid" api-key
-                                         "units" "metric"}})
+                                             "appid" api-key
+                                             "units" "metric"}})
         :body
         (json/read-str :key-fn keyword))))
 
@@ -20,8 +20,7 @@
   (->OpenWeatherRecordClient endpoint api-key))
 
 (comment
-  (def weather-client (make-open-weather-client 
+  (def weather-client (make-open-weather-client
                        "https://api.openweathermap.org/data/2.5/weather"
                        "API_KEY"))
-  (get-city-weather weather-client "Campinas")
-  )
+  (get-city-weather weather-client "Campinas"))
