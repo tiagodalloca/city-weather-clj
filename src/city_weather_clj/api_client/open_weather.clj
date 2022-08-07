@@ -5,7 +5,7 @@
 (defprotocol OpenWeatherClient
   (get-city-weather [this city]))
 
-(defrecord OpenWeatherRecordClient [endpoint api-key]
+(defrecord RecordOpenWeatherClient [endpoint api-key]
   OpenWeatherClient
   (get-city-weather
     [_ city]
@@ -17,7 +17,7 @@
 
 (defn make-open-weather-client
   [endpoint api-key]
-  (->OpenWeatherRecordClient endpoint api-key))
+  (->RecordOpenWeatherClient endpoint api-key))
 
 (comment
   (def weather-client (make-open-weather-client

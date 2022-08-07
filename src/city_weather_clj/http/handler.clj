@@ -1,33 +1,33 @@
 (ns city-weather-clj.http.handler
-  (:require
-   [city-weather-clj.api-client.open-weather :as open-weather-client]
-   [city-weather-clj.cache :as cache]
-   [city-weather-clj.util :refer [get-timestamp date-from-timestamp diff-minutes-dates]]
-   [malli.util :as mu]
-   [muuntaja.core :as m]
-   reitit.coercion.malli
-   [reitit.ring :as ring]
-   [reitit.ring.coercion :as coercion]
-   reitit.ring.malli
-   [reitit.ring.middleware.exception :as exception]
-   [reitit.ring.middleware.multipart :as multipart]
-   [reitit.ring.middleware.muuntaja :as muuntaja]
-   [reitit.ring.middleware.parameters :as parameters]))
+  (:require [city-weather-clj.api-client.open-weather :as open-weather-client]
+            [city-weather-clj.cache :as cache-ns]
+            [city-weather-clj.util :refer [date-from-timestamp
+                                           diff-minutes-dates get-timestamp now-date]]
+            [malli.util :as mu]
+            [muuntaja.core :as m]
+            reitit.coercion.malli
+            [reitit.ring :as ring]
+            [reitit.ring.coercion :as coercion]
+            reitit.ring.malli
+            [reitit.ring.middleware.exception :as exception]
+            [reitit.ring.middleware.multipart :as multipart]
+            [reitit.ring.middleware.muuntaja :as muuntaja]
+            [reitit.ring.middleware.parameters :as parameters]))
 
 (defn get-city-weather-handler
   [{{{:keys [city]} :path} :parameters}
    {weather-api-client :api-client/weather
-    system-cache :system/cache}]
+    cache :system/cache}]
   (try
-    (let [{cache-datime :datetime
+    (let [{cache-dateime :datetime
            :as cache-city-weather}
-          (cache/get-city-weather system-cache city)
+          (cache-ns/get-city-weather cache city)
 
-          cache-date (some-> cache-datime date-from-timestamp)
-          cache-diff (some->> cache-date (diff-minutes-dates (Date.)))
+          cache-date (some-> cache-dateime date-from-timestamp)
+          cache-diff (some-> cache-date (diff-minutes-dates (now-date)))
           is-cache-outdated (or (not (some? cache-diff))
                                 (> cache-diff 5))
-
+          
           city-weather
           (if is-cache-outdated
             (let [{:keys [name]
@@ -41,10 +41,10 @@
               cache-city-weather))]
       (when is-cache-outdated
         (println (str "Updating cache " city-weather))
-        (cache/assoc-city-weather! system-cache city-weather))
+        (cache-ns/assoc-city-weather! cache city-weather))
       {:body city-weather})
-      (catch Exception e
-        {:status 500 :body (str "Couldn't find weather information for this city.")})))
+    (catch Exception _
+      {:status 500 :body (str "Couldn't find weather information for this city.")})))
 
 (defn inject-handler-deps
   [handler deps]

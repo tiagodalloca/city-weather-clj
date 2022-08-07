@@ -14,7 +14,9 @@
     (swap! map-atom assoc (.toUpperCase city) city-weather)))
 
 (defn make-weather-cache
-  []
-  ;; hash-map is used becasue it is more efficient than
-  ;; array-map for larger counts entries
-  (->AtomWeatherCache (atom (hash-map))))
+  ([initial-state]
+   (->AtomWeatherCache (atom initial-state)))
+  ([] 
+   ;; hash-map is used becasue it is more efficient than
+   ;; array-map for larger counts entries
+   (make-weather-cache (hash-map))))
