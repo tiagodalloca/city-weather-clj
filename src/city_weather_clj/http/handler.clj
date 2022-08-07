@@ -1,6 +1,7 @@
 (ns city-weather-clj.http.handler
   (:require
    [city-weather-clj.api-client.open-weather :refer [get-city-weather]]
+   [city-weather-clj.util :refer [get-timestamp]]
    [malli.util :as mu]
    [muuntaja.core :as m]
    reitit.coercion.malli
@@ -12,29 +13,34 @@
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [reitit.ring.middleware.parameters :as parameters]))
 
-(defn get-timestamp
-  []
-  (let [tz (java.util.TimeZone/getTimeZone "UTC")
-        df (new java.text.SimpleDateFormat "yyyy-MM-dd'T'HH:mm:ss'Z'")]
-    (.setTimeZone df tz)
-    (.format df (new java.util.Date))))
-
 ;; TODO: cache responses
 
-(defn get-routes [{weather-api-client :api-client/weather}]
+(defn get-city-weather-handler
+  [{{{:keys [city]} :path} :parameters}
+   {weather-api-client :api-client/weather}]
+  (let [{:keys [name]
+         {:keys [temp]} :main}
+        (get-city-weather weather-api-client city)]
+    {:body
+     {:city name
+      :datetime (get-timestamp)
+      :temperature temp}}))
+
+(defn inject-handler-deps
+  [handler deps]
+  (fn [request]
+    (handler request deps)))
+
+(defn get-routes
+  [deps]
   ["/weather"
    ["/:city"
     {:get
      {:parameters {:path {:city string?}}
       :responses {200 {:body string?}}
-      :handler (fn [{{{:keys [city]} :path} :parameters}]
-                 (let [{:keys [name]
-                        {:keys [temp]} :main}
-                       (get-city-weather weather-api-client city)]
-                   {:body 
-                    {:city name 
-                     :datetime (get-timestamp)
-                     :temperature temp}}))}}]])
+      :handler (inject-handler-deps
+                get-city-weather-handler
+                deps)}}]])
 
 (def options
   {:data
@@ -65,7 +71,8 @@
                  coercion/coerce-request-middleware
                  multipart/multipart-middleware]}})
 
-(defn get-handler [deps]
+(defn get-handler
+  [deps]
   (let [routes (get-routes deps)]
     (ring/ring-handler
      (ring/router routes options))))
