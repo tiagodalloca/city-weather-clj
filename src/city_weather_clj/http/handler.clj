@@ -58,9 +58,7 @@
     {:get
      {:parameters {:path {:city string?}}
       :responses {200 {:body string?}}
-      :handler (inject-handler-deps
-                get-city-weather-handler
-                deps)}}]])
+      :handler (inject-handler-deps get-city-weather-handler deps)}}]])
 
 (def options
   {:data
